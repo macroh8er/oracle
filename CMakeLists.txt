@@ -3,6 +3,10 @@ set(CMAKE_CXX_STANDARD 14)
 
 project(oracle)
 
+include_directories(oracle_core/include)
+include_directories(oracle_overlay/include)
+include_directories(opt/spdlog/include)
+
 add_subdirectory(opt)
 add_subdirectory(oracle_core)
 add_subdirectory(oracle_overlay)
@@ -19,12 +23,13 @@ file(GLOB_RECURSE
         "tests/*.hpp"
         )
 
-
-include_directories(oracle_core/include)
-include_directories(oracle_overlay/include)
-
 add_executable(oracle ${lib_srcs})
-target_link_libraries(oracle oracle_core oracle_overlay)
+# using:
+#       oracle_core
+#       oracle_overlay
+#       boost_system
+#       boost_program_options
+target_link_libraries(oracle oracle_core oracle_overlay boost_system boost_program_options)
 
 
 include_directories(oracle_core/include opt/googletest/googletest/include opt/googletest/googlemock/include)

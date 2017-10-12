@@ -39,3 +39,4 @@ build/*.*
 *.swo
 .vimrc.local
 t_*.txt
+oracle_log.txt

@@ -1,3 +1,6 @@
 [submodule "opt/googletest"]
 	path = opt/googletest
 	url = https://github.com/google/googletest
+[submodule "opt/spdlog"]
+	path = opt/spdlog
+	url = https://github.com/gabime/spdlog

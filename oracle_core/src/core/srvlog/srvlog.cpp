@@ -1,4 +1,5 @@
 #include <core/srvlog/srvlog.hpp>
+#include <core/env/env.hpp>
 
 #include <fstream>
 #include <exception>
@@ -101,15 +102,27 @@ bool srvlog::impl::parse(std::string cnt) {
 	 * detect any old games
 	 */
 
-	auto now = std::chrono::system_clock::now();
-	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	/*
+	 * respect --debug_ignore_time
+	 */
+	std::string testing_regex = "";
+	if (oracle::env::get().debug_shouldIgnoreTime()) {
+		
+		testing_regex = "([0-9]+)/([0-9]+)/([0-9]+) - ([0-9]+):([0-9]+):([0-9]+): ([0-9]+).([0-9]+).([0-9]+).([0-9]+):([0-9]+) \\(Lobby ([0-9]+) ([A-Z_]+).+";
 
-	std::stringstream test_regex_str;
-	test_regex_str <<
-		std::put_time(std::localtime(&in_time_t), "%m/%d/%Y - %H:%M:%S") <<
-		": ([0-9]+).([0-9]+).([0-9]+).([0-9]+):([0-9]+) \\(Lobby ([0-9]+) ([A-Z_]+).+";
+	}
+	else {
+		auto now = std::chrono::system_clock::now();
+		auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
-	std::regex test_regex(test_regex_str.str());
+		std::stringstream test_regex_str;
+		test_regex_str <<
+			std::put_time(std::localtime(&in_time_t), "%m/%d/%Y - %H:%M:%S") <<
+			": ([0-9]+).([0-9]+).([0-9]+).([0-9]+):([0-9]+) \\(Lobby ([0-9]+) ([A-Z_]+).+";
+		testing_regex = test_regex_str.str();
+	}
+
+	std::regex test_regex(testing_regex);
 
 	if (!std::regex_search(last_line, test_regex)) {
 		return false;
