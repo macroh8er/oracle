@@ -23,7 +23,6 @@ interface::interface(QWidget *parent)
 	set_background();
 
 	QLabel* img = new QLabel(this);
-	img->setFixedSize(100,100);
 	img->setPixmap(QPixmap("build/media/logo_medium.png"));
 	img->show();
 	
@@ -46,7 +45,7 @@ void interface::set_frameless() {
 	float qt_version_n = std::atof(qt_version);
 
 	if (qt_version_n <= 5.2) {
-	//	setAttribute(Qt::WA_PaintOnScreen); // not needed in Qt 5.2 and up
+		setAttribute(Qt::WA_PaintOnScreen); // not needed in Qt 5.2 and up
 	}
 }
 

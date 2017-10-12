@@ -5,6 +5,14 @@
 #include <iostream>
 #include <regex>
 
+/*
+ * time / date
+ */
+#include <chrono>
+#include <ctime>
+#include <sstream>
+#include <iomanip>
+
 namespace oracle {
 
 struct srvlog::impl
@@ -22,6 +30,11 @@ struct srvlog::impl
 	};
 
 	construction_ construction;
+
+	/*
+	 * store player ids
+	 */
+	std::vector<player_id> player_ids;
 
 	impl(const log_content content);
 	impl(const log_path path);
@@ -84,9 +97,19 @@ bool srvlog::impl::parse(std::string cnt) {
 
 	/*
 	 * test if the line is a vaild game beginning (aka not a loopback line)
+	 * also build the date / time from the current time to make sure we don't
+	 * detect any old games
 	 */
 
-	std::regex test_regex("([0-9]+)\\/([0-9]+)\\/([0-9]+) - ([0-9]+):([0-9]+):([0-9]+): ([0-9]+).([0-9]+).([0-9]+).([0-9]+):([0-9]+) \\(Lobby ([0-9]+) ([A-Z_]+).+");
+	auto now = std::chrono::system_clock::now();
+	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+	std::stringstream test_regex_str;
+	test_regex_str <<
+		std::put_time(std::localtime(&in_time_t), "%m/%d/%Y - %H:%M:%S") <<
+		": ([0-9]+).([0-9]+).([0-9]+).([0-9]+):([0-9]+) \\(Lobby ([0-9]+) ([A-Z_]+).+";
+
+	std::regex test_regex(test_regex_str.str());
 
 	if (!std::regex_search(last_line, test_regex)) {
 		return false;
@@ -95,6 +118,38 @@ bool srvlog::impl::parse(std::string cnt) {
 	/*
 	 * get all instances of user id
 	 */
+	std::regex search_regex("([0-9]:\\[U:[0-9]:([0-9]+)\\])");
+
+
+	std::vector<std::string> ids;
+	for(std::sregex_iterator it(last_line.begin(), last_line.end(), search_regex), end; it != end; it++) {
+		std::smatch match = *it;
+		/*
+		 * id is [2]
+		 */
+		ids.push_back(match[2]);
+	}
+
+	/*
+	 * if there is less than 10 ids, ignore this game
+	 */
+	if (ids.size() < 10) {
+		return false;
+	}
+
+	for (int i = 0; i < 10; i++) {
+		player_id addition { ids[i], (i >= 5), 0 };
+		player_ids.push_back(addition);
+	}
+
+	for (int i = 10; i < ids.size(); i++) {
+		for (int x = 0; x < 10; x++) {
+			if(player_ids[x].id == ids[i]) {
+				player_ids[x].party = true;
+			}
+		}
+	}
+
 
 	return true;
 }
@@ -136,6 +191,10 @@ bool srvlog::parse() {
 	}
 
 	return m_impl->parse(m_impl->construction.arg);
+}
+
+std::vector<player_id> srvlog::getPlayers() {
+	return m_impl->player_ids;
 }
 
 srvlog::~srvlog() = default;

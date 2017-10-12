@@ -36,5 +36,6 @@ build/
 build/*.*
 
 *.swp
+*.swo
 .vimrc.local
 t_*.txt

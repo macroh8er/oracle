@@ -14,9 +14,9 @@ namespace oracle {
  *  Detailed description
  */
 struct player_id {
-	const std::string id;
-	const int team; /* 0 = radiant, 1 = dire */
-	const bool party; /* whether the player is party of the local player */
+	std::string id;
+	int team; /* 0 = radiant, 1 = dire */
+	bool party; /* whether the player is party of the local player */
 } /* optional variable list */;
 
 BOOST_STRONG_TYPEDEF(std::string, log_path)
