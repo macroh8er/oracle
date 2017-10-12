@@ -69,13 +69,13 @@ const void env::printOptions() {
 	std::cout << *m_impl->description << std::endl;
 }
 
-const bool env::needsHelp() {
-	return m_impl->vm.count("help");
-}
-
 /*
  *  environment
  */
+
+const bool env::needsHelp() {
+	return m_impl->vm.count("help");
+}
 
 const bool env::isVerbose() {
 	return m_impl->vm.count("verbose");
@@ -83,6 +83,10 @@ const bool env::isVerbose() {
 
 const bool env::isSilent() {
 	return m_impl->vm.count("silent");
+}
+
+const std::string env::logPath() {
+	return m_impl->vm["log"].as<std::string>();
 }
 
 /*
