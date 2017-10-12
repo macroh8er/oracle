@@ -2,7 +2,7 @@
 #define INTERFACE_H
 
 #include <memory>
-#include <QtQuick/QQuickView>
+#include <QWidget>
 
 namespace oracle {
 namespace Impl {
@@ -12,20 +12,21 @@ namespace Impl {
  *
  *  Detailed description
  */
-class interface : public QQuickView
+class interface : public QWidget
 {
-	Q_OBJECT
 public:
-	explicit interface(QWindow *parent = 0);
+	explicit interface(QWidget *parent = 0);
 	virtual ~interface();
 
-	void setMainQmlPath(const QString &path);
+private:
 
-	void showExpanded();
+	/*
+	 * set necessary options and attributes
+	 * to be a frameless window
+	 */
+	void set_frameless();
 
-protected:
-	struct impl;
-	std::unique_ptr<impl> m_impl; /* pImpl */
+	void set_background();
 };
 
 } /* namespace Impl */

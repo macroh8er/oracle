@@ -1,37 +1,53 @@
 #include "interface.h"
 
+#include <cstdlib>
+
+/*
+ * for Qt version
+ */
+#include <QtGlobal>
+
+#include <QLabel>
+#include <QPixmap>
+
 namespace oracle {
 namespace Impl {
 
-struct interface::impl
+interface::interface(QWidget *parent)
+	: QWidget(parent)
 {
+	//connect(engine(), SIGNAL(quit()), SLOT(close()));
+	setFixedSize(600, 350);
 
-	QString mainQmlPath;
+	set_frameless();
+	set_background();
 
-	impl();
-	~impl();
-};
-
-interface::interface(QWindow *parent)
-	: QQuickView(parent),
-	  m_impl(std::make_unique<impl>())
-{
-	connect(engine(), SIGNAL(quit()), SLOT(close()));
-	setResizeMode(QQuickView::SizeRootObjectToView);
+	QLabel* img = new QLabel(this);
+	img->setFixedSize(100,100);
+	img->setPixmap(QPixmap("build/media/logo_medium.png"));
+	img->show();
+	
 }
 
-void interface::setMainQmlPath(const QString &path) {
-	/*
-	 * may need to adjust path on different platforms
-	 * 	https://github.com/wang-bin/QtAV/blob/master/examples/QMLPlayer/qtquick2applicationviewer/qtquick2applicationviewer.cpp
-	 */
-
-	m_impl->mainQmlPath = path;
-	setSource(m_impl->mainQmlPath);
+void interface::set_background() {
+	setWindowFlags(Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
-void interface::showExpanded() {
-	show();
+void interface::set_frameless() {
+	setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
+	setParent(0); // Create TopLevel-Widget
+	setAttribute(Qt::WA_NoSystemBackground, true);
+	setAttribute(Qt::WA_TranslucentBackground, true);
+
+	const char* qt_version = qVersion();
+	float qt_version_n = std::atof(qt_version);
+
+	if (qt_version_n <= 5.2) {
+	//	setAttribute(Qt::WA_PaintOnScreen); // not needed in Qt 5.2 and up
+	}
 }
 
 interface::~interface() = default;

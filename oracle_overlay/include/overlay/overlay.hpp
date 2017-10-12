@@ -16,8 +16,11 @@ public:
 	/*
 	 * q_argc must be > 0, see
 	 * 	http://doc.qt.io/qt-5/qguiapplication.html#QGuiApplication
+	 *
+	 * it also must be a reference, see
+	 * 	https://bugreports.qt.io/browse/QTBUG-5637
 	 */
-	overlay(int q_argc, char** q_argv);
+	overlay(const std::string content_dir, int& q_argc, char** q_argv);
 	~overlay();
 
 	/*
