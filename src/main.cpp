@@ -54,7 +54,10 @@ int main(int argc, char *argv[])
 				oracle::logging::get().info("Game initated");
 				std::vector<oracle::player_id> players = log.getPlayers();
 				for (oracle::player_id i : players) {
-					oracle::logging::get().debug("ID: {0}\t\tteam: {1}\tparty: {2}", i.id, i.team, i.party);
+
+					oracle::logging::get().debug("ID: {0}", i.id);
+					oracle::logging::get().debug("\tteam: {0}", i.team);
+					oracle::logging::get().debug("\tparty: {0}", i.party);
 				}
 			}
 			/*

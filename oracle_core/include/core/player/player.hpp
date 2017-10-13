@@ -4,7 +4,7 @@
 #include <core/srvlog/srvlog.hpp>
 
 #include <string>
-#include <memoery>
+#include <memory>
 
 namespace oracle {
 

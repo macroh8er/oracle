@@ -6,6 +6,7 @@ project(oracle)
 include_directories(oracle_core/include)
 include_directories(oracle_overlay/include)
 include_directories(opt/spdlog/include)
+include_directories(opt/json/src)
 
 add_subdirectory(opt)
 add_subdirectory(oracle_core)
@@ -33,6 +34,7 @@ target_link_libraries(oracle oracle_core oracle_overlay boost_system boost_progr
 
 
 include_directories(oracle_core/include opt/googletest/googletest/include opt/googletest/googlemock/include)
+
 add_executable(oracle_tests ${test_srcs})
 target_link_libraries(oracle_tests oracle_core gtest)
 

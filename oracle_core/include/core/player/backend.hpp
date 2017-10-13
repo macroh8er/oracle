@@ -1,6 +1,12 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
+#include <core/srvlog/srvlog.hpp>
+#include <future>
+
+#include <json.hpp>
+using json = nlohmann::json;
+
 namespace oracle {
 namespace Impl {
 
@@ -20,23 +26,56 @@ namespace Impl {
 class backend
 {
 public:
-	backend();
-	virtual ~backend();
+	backend(const player_id id);
+	virtual ~backend() {}
+
+	/*
+	 * Backend name
+	 */
+	virtual std::string name() = 0;
 
 	/*
 	 * Fetch the player's display name
 	 */
-	virtual const std::string fetchName();
+	virtual std::future<std::string> fetchName() = 0;
 
 	/*
 	 * Like core/player::getSoloMMR, estimated MMR is returned if the real MMR is undecidable
 	 */
-	virtual const int fetchSoloMMR();
+	virtual std::future<int> fetchSoloMMR() = 0;
 
 	/*
-	 * Returns party MMR, if undecidable return 0
+	 * Fetches party MMR, if undecidable return 0
 	 */
-	virtual const int fetchPartyMMR();
+	virtual std::future<int> fetchPartyMMR() = 0;
+
+	/*
+	 * Country code
+	 */
+	virtual std::future<std::string> fetchCountryCode() = 0;
+
+	/*
+	 * Avatar
+	 */
+	virtual std::future<std::string> fetchAvatar() = 0;
+
+	/*
+	 * Used for backend implementations
+	 * These functions are syncrhonous, they should be invoked with async if you want
+	 * to return a future
+	 */
+	static std::string 	GET(const std::string url);
+	static json		GETjson(const std::string url);
+
+protected:
+	const player_id m_id;
+
+	/*
+	 * Cached values
+	 */
+	std::string 	m_name;
+	int		m_solo_mmr;
+	int		m_party_mmr;
 
 };
 
