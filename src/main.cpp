@@ -5,6 +5,7 @@
 #include <core/fswatch/fswatch.hpp>
 #include <overlay/overlay.hpp>
 #include <core/env/env.hpp>
+#include <core/player/player.hpp>
 
 #include <thread>
 #include <chrono>
@@ -52,13 +53,53 @@ int main(int argc, char *argv[])
 
 			if (match) {
 				oracle::logging::get().info("Game initated");
-				std::vector<oracle::player_id> players = log.getPlayers();
-				for (oracle::player_id i : players) {
+				std::vector<oracle::player_id> player_ids = log.getPlayers();
+				std::vector<std::unique_ptr<oracle::player>> players;
 
-					oracle::logging::get().debug("ID: {0}", i.id);
-					oracle::logging::get().debug("\tteam: {0}", i.team);
-					oracle::logging::get().debug("\tparty: {0}", i.party);
+				/*
+				 * load player data
+				 */
+				for (auto& i : player_ids) {
+					players.push_back( std::make_unique<oracle::player>(i) );
 				}
+
+				/*
+				 * now that player data is being fetched, start consuming it
+				 * first, remove any players that don't have exposed profiles
+				 */
+				for (auto it = players.begin(); it != players.end(); ) {
+
+					/*
+					 * wait for data to arrive
+					 */
+					(*it)->waitForData();
+
+					if ((*it)->getName() == "") {
+						it = players.erase(it);
+					}
+					else {
+						it++;
+					}
+				}
+
+				for (auto& i : players) {
+					oracle::logging::get().debug("Player {0} ({1})", i->getName(), i->id());
+
+					if (i->isSoloEstimated()) {
+						oracle::logging::get().debug("\tSolo MMR (Estimated*): {0}", i->getSoloMMR());
+					}
+					else {
+						oracle::logging::get().debug("\tSolo MMR: {0}", i->getSoloMMR());
+					}
+
+					if (i->getPartyMMR()) {
+						oracle::logging::get().debug("\tPaty MMR: {0}", i->getPartyMMR());
+					}
+				}
+
+				oracle::logging::get().debug("*: This is not necessarily accurate, this user does not have a real MMR");
+
+
 			}
 			/*
 			 * ignore

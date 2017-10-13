@@ -30,7 +30,8 @@ add_executable(oracle ${lib_srcs})
 #       oracle_overlay
 #       boost_system
 #       boost_program_options
-target_link_libraries(oracle oracle_core oracle_overlay boost_system boost_program_options)
+#       curl
+target_link_libraries(oracle oracle_core oracle_overlay boost_system boost_program_options curl)
 
 
 include_directories(oracle_core/include opt/googletest/googletest/include opt/googletest/googlemock/include)

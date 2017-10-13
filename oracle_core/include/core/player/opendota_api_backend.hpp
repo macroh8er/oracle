@@ -16,12 +16,10 @@ class opendota_api_backend : public backend
 {
 public:
 	opendota_api_backend(const player_id id);
-	~opendota_api_backend();
+	virtual ~opendota_api_backend() {}
 
 	virtual std::string name() override;
-	virtual std::future<std::string> fetchName() override;
-	virtual std::future<int> fetchSoloMMR() override;
-	virtual std::future<int> fetchPartyMMR() override;
+	virtual std::future<fetch_t> fetchData() override;
 };
 
 } /* namespace Impl */

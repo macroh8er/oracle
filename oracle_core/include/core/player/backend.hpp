@@ -10,6 +10,24 @@ using json = nlohmann::json;
 namespace oracle {
 namespace Impl {
 
+/*! \struct fetch_t
+ *  \brief Data which is returned when fetching
+ *
+ *  Detailed description
+ */
+struct fetch_t {
+	std::string name;
+	int solo_mmr;
+	bool solo_estimated;
+	int party_mmr;
+	std::string country_code;
+	std::string avatar;
+
+	fetch_t()
+		: name(""), solo_mmr(0), solo_estimated(false), party_mmr(0), country_code(""), avatar("")
+	{}
+};
+
 /*! \class backend
  *  \brief Used for fetching information about players
  *
@@ -33,31 +51,11 @@ public:
 	 * Backend name
 	 */
 	virtual std::string name() = 0;
-
+	
 	/*
-	 * Fetch the player's display name
+	 * Asyncrhonously fetch player data
 	 */
-	virtual std::future<std::string> fetchName() = 0;
-
-	/*
-	 * Like core/player::getSoloMMR, estimated MMR is returned if the real MMR is undecidable
-	 */
-	virtual std::future<int> fetchSoloMMR() = 0;
-
-	/*
-	 * Fetches party MMR, if undecidable return 0
-	 */
-	virtual std::future<int> fetchPartyMMR() = 0;
-
-	/*
-	 * Country code
-	 */
-	virtual std::future<std::string> fetchCountryCode() = 0;
-
-	/*
-	 * Avatar
-	 */
-	virtual std::future<std::string> fetchAvatar() = 0;
+	virtual std::future<fetch_t> fetchData() = 0;
 
 	/*
 	 * Used for backend implementations
@@ -69,14 +67,6 @@ public:
 
 protected:
 	const player_id m_id;
-
-	/*
-	 * Cached values
-	 */
-	std::string 	m_name;
-	int		m_solo_mmr;
-	int		m_party_mmr;
-
 };
 
 } /* namespace Impl */

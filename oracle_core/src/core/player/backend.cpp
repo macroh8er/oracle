@@ -2,6 +2,7 @@
 #include <core/logging/logging.hpp>
 
 #include <exception>
+#include <iostream>
 
 /*
  * use cURL
@@ -20,9 +21,7 @@ backend::backend(const player_id id)
 static std::size_t curl_write_cb(char* ptr, std::size_t size, std::size_t nmemb, void* userdata) {
 	std::string& str = *( static_cast<std::string*>(userdata) );
 	
-	for (int i = 0; i < size; i++) {
-		str += ptr[i];
-	}
+	str.append(ptr, size * nmemb);
 
 	return (size * nmemb);
 }

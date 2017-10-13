@@ -20,6 +20,10 @@ public:
 	player(const player_id id);
 	~player();
 
+	void waitForData();
+
+	const std::string id();
+
 	/*
 	 * Returns player profile name
 	 */
@@ -30,6 +34,11 @@ public:
 	 * If this is undecidable, return estimated MMR
 	 */
 	const int getSoloMMR();
+
+	/*
+	 * Returns whether solo MMR was estimated
+	 */
+	const bool isSoloEstimated();
 
 	/*
 	 * Returns ranked party MMR if applicable
