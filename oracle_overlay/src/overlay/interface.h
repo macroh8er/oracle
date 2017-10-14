@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QWidget>
+#include <QFrame>
 
 namespace oracle {
 namespace Impl {
@@ -12,7 +13,7 @@ namespace Impl {
  *
  *  Detailed description
  */
-class interface : public QWidget
+class interface : public QFrame
 {
 public:
 	explicit interface(QWidget *parent = 0);

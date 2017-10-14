@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
 	oracle::logging::get().info("Oracle starting");
 	oracle::logging::get().info("For up to date bug-fixes and features clone the oracle repository: https://github.com/macroh8er/oracle");
 
+	oracle::overlay overlay("build/content", argc, argv);
+	return overlay.exec();
+
 	oracle::srvlog log(oracle::log_path("/home/thomas/.steam/steam/steamapps/common/dota 2 beta/game/dota/server_log.txt"));
 	oracle::fswatch watch("/home/thomas/.steam/steam/steamapps/common/dota 2 beta/game/dota/server_log.txt");
 
@@ -60,6 +63,7 @@ int main(int argc, char *argv[])
 				 * load player data
 				 */
 				for (auto& i : player_ids) {
+					oracle::logging::get().debug("ID {0}", i.id);
 					players.push_back( std::make_unique<oracle::player>(i) );
 				}
 
